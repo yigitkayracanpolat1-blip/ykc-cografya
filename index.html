@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Türkiye Haritaları</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      overflow: hidden;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .sidebar {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background-color: #ffffffcc;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      z-index: 10;
+    }
+
+    .sidebar label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .mapDisplay {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    #mapContainer {
+      width: 95vw;
+      height: 85vh;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      transform-origin: center center;
+      transition: transform 0.2s ease;
+    }
+
+    #mapDescription {
+      margin-top: 10px;
+      font-size: 22px; /* Daha büyük */
+      color: #000000;  /* Tam siyah */
+      text-align: center;
+      max-width: 90vw;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="mapDisplay">
+      <div id="mapContainer"></div>
+      <div id="mapDescription"></div>
+    </div>
+
+    <div class="sidebar">
+      <form id="mapForm">
+        <label><input type="radio" name="map" value="siyasi"> Siyasi</label>
+        <label><input type="radio" name="map" value="deprem"> Deprem</label>
+        <label><input type="radio" name="map" value="heyelan"> Heyelan</label>
+        <label><input type="radio" name="map" value="cig"> Çığ</label>
+        <label><input type="radio" name="map" value="sel"> Sel</label>
+        <label><input type="radio" name="map" value="yangin"> Yangın</label>
+        <label><input type="radio" name="map" value="sicaklik"> Sıcaklık</label>
+        <label><input type="radio" name="map" value="iklim"> İklim</label>
+        <label><input type="radio" name="map" value="yagis"> Yağış</label>
+        <label><input type="radio" name="map" value="bitki"> Bitki Örtüsü</label>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const mapForm = document.getElementById("mapForm");
+    const mapContainer = document.getElementById("mapContainer");
+    const mapDescription = document.getElementById("mapDescription");
+
+    const mapPaths = {
+      siyasi: "maps/siyasi.webp",
+      deprem: "maps/deprem.png",
+      heyelan: "maps/heyelan.png",
+      cig: "maps/cig.png",
+      sel: "maps/sel.png",
+      yangin: "maps/yangin.png",
+      sicaklik: "maps/sicaklik.png",
+      iklim: "maps/iklim.png",
+      yagis: "maps/yagis.png",
+      bitki: "maps/bitki.png"
+    };
+
+    const mapDescriptions = {
+      siyasi: "Türkiye'nin illerini ve sınırlarını gösteren siyasi harita.",
+      deprem: "Deprem riski bölgelerini gösteren harita.",
+      heyelan: "Heyelan tehlikesi olan bölgeleri gösterir.",
+      cig: "Çığ riski taşıyan alanları gösteren harita.",
+      sel: "Sel riski yüksek bölgeleri gösteren harita.",
+      yangin: "Orman yangını riski taşıyan bölgeleri gösterir.",
+      sicaklik: "Yıllık ortalama sıcaklık dağılımını gösteren harita.",
+      iklim: "Türkiye'nin iklim bölgelerini gösteren harita.",
+      yagis: "Yağış miktarlarını bölgelere göre gösterir.",
+      bitki: "Bitki örtüsü dağılımını gösteren harita."
+    };
+
+    let scale = 1;
+
+    // Sayfa ilk yüklendiğinde varsayılan harita ve açıklama
+    const defaultMap = "siyasi";
+    mapContainer.style.backgroundImage = `url("${mapPaths[defaultMap]}")`;
+    mapDescription.textContent = mapDescriptions[defaultMap];
+    mapContainer.style.transform = `scale(${scale})`;
+
+    mapForm.addEventListener("change", (e) => {
+      const selected = e.target.value;
+      mapContainer.style.backgroundImage = `url(${mapPaths[selected]})`;
+      mapDescription.textContent = mapDescriptions[selected];
+      scale = 1;
+      mapContainer.style.transform = `scale(${scale})`;
+    });
+
+    mapContainer.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? -0.1 : 0.1;
+      scale = Math.min(Math.max(0.5, scale + delta), 3);
+      mapContainer.style.transform = `scale(${scale})`;
+    });
+  </script>
+</body>
+</html>
